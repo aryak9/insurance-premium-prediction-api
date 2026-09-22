@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, computed_field, field_validator
-from typing import Literal, Annotated
+from typing import Literal, Annotated, List
 from config.city_tier import tier_1_cities, tier_2_cities
 
 class UserInput(BaseModel):
@@ -53,3 +53,8 @@ class UserInput(BaseModel):
             return 2
         else:
             return 3
+
+
+
+class BatchUserInput(BaseModel):
+    users: List[UserInput]

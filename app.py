@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from models.predict import predict_output,model_version,model
-from schema.user_input import UserInput
-from schema.prediction_response import PredictionResponse
+from models.predict import predict_output, model_version, model
+from schema.user_input import BatchUserInput, UserInput
+from schema.prediction_response import PredictionResponse, BatchPredictionResponse
 
 
 app = FastAPI()
@@ -39,3 +39,32 @@ def predict_premium(data: UserInput):
     
 
     
+@app.post("/predict/batch", response_model=BatchPredictionResponse)
+def predict_batch(data: BatchUserInput):
+    results = []
+
+    try:
+        for user in data.users:
+
+            user_input = {
+                "bmi": user.bmi,
+                "age_group": user.age_group,
+                "lifestyle_risk": user.lifestyle_risk,
+                "city_tier": user.city_tier,
+                "income_lpa": user.income_lpa,
+                "occupation": user.occupation
+            }
+
+            prediction = predict_output(user_input)
+            results.append(prediction)
+
+        return {
+            "total_predictions": len(results),
+            "results": results
+        }
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)}
+        )   
