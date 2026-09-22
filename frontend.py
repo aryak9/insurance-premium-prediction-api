@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import requests
 import pandas as pd
@@ -7,7 +8,10 @@ import pandas as pd
 # CONFIGURATION
 # ============================================================
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = os.getenv(
+    "API_URL",
+    "http://127.0.0.1:8000"
+)
 
 OCCUPATIONS = [
     "retired",
